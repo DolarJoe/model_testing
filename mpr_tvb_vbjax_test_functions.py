@@ -32,8 +32,16 @@ def load_or_generate_data_for_testcase(test_case: pd.Series) -> List[npt.NDArray
     if not os.path.exists(file_path):
         rng = np.random.default_rng(seed=7583146)
 
-        r_random = rng.uniform(low=test_case.r_low, high=test_case.r_high, size=int(test_case.linspace_size))
-        V_random = rng.uniform(low=test_case.V_low, high=test_case.V_high, size=int(test_case.linspace_size))
+        r_random = rng.uniform(
+            low=test_case.r_low,
+            high=test_case.r_high,
+            size=int(test_case.linspace_size),
+        )
+        V_random = rng.uniform(
+            low=test_case.V_low,
+            high=test_case.V_high,
+            size=int(test_case.linspace_size),
+        )
         save_data_for_testcase(test_case, r_random, V_random)
 
     with np.load(file_path) as data:
@@ -45,7 +53,10 @@ def save_data_for_testcase(test_case: pd.Series, r_random: npt.NDArray, V_random
     np.savez_compressed(f"test_data/{filename}", r_random=r_random, V_random=V_random)
 
 
-def run_tvb_implementation(test_case=default_values.iloc[0], test_data: List[npt.NDArray] | None = None):
+def run_tvb_implementation(
+    test_case=default_values.iloc[0],
+    test_data: List[npt.NDArray] | None = None,
+):
 
     if not test_data:
         test_data = create_meshgrid_linspace(test_case)
@@ -60,7 +71,10 @@ def run_tvb_implementation(test_case=default_values.iloc[0], test_data: List[npt
     )
 
 
-def run_vbjax_implementation(test_case=default_values.iloc[0], test_data: List[npt.NDArray] | None = None):
+def run_vbjax_implementation(
+    test_case=default_values.iloc[0],
+    test_data: List[npt.NDArray] | None = None,
+):
     if not test_data:
         test_data = create_meshgrid_linspace(test_case)
     parameters_only = test_case[["tau", "I", "Delta", "J", "eta", "cr", "cv"]]

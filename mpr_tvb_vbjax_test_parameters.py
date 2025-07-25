@@ -38,7 +38,9 @@ def _expand_test_cases(base_cases):
         if not set(test_case.keys()).issubset(default_values_dict.keys()):
             problematic_test_cases.append(test_case)
     if problematic_test_cases:
-        raise ValueError(f"The values in these test cases don't match the default parametes: {problematic_test_cases}")
+        raise ValueError(
+            f"The values in these test cases don't match the default parametes: {problematic_test_cases}"
+        )
 
     full_tests = [default_values.iloc[0].to_dict() | case for case in expanded]
     df = pd.DataFrame(full_tests)
