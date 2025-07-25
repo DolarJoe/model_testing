@@ -9,6 +9,7 @@ from tvb.simulator.models.infinite_theta import MontbrioPazoRoxin
 from vbjax import MPRTheta, mpr_dfun
 
 from mpr_tvb_vbjax_default_parameters import coupling_, default_values
+from tvb_broken_mpr_model import MontbrioPazoRoxin_broken
 
 
 def create_meshgrid_linspace(test_case: pd.Series) -> List[npt.NDArray]:
@@ -65,7 +66,7 @@ def run_tvb_implementation(
 
     param_dict = {k: np.array([v]) for k, v in parameters_only.items()}
 
-    return MontbrioPazoRoxin(**param_dict, Gamma=np.r_[0.0]).dfun(
+    return MontbrioPazoRoxin_broken(**param_dict, Gamma=np.r_[0.0]).dfun(
         test_data,
         coupling=coupling_,
     )
