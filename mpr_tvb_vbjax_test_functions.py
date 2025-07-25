@@ -73,4 +73,9 @@ def run_vbjax_implementation(test_case=default_values.iloc[0], test_data: List[n
 
 
 def run_test(test_case: pd.Series):
-    pass
+    test_data = load_or_generate_data_for_testcase(test_case)
+
+    return (
+        run_tvb_implementation(test_case, test_data),
+        run_vbjax_implementation(test_case, test_data),
+    )
