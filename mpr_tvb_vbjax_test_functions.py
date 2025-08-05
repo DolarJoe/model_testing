@@ -8,7 +8,7 @@ from tvb.simulator.lab import *
 from tvb.simulator.models.infinite_theta import MontbrioPazoRoxin
 from vbjax import MPRTheta, mpr_dfun
 
-from mpr_tvb_vbjax_default_parameters import coupling_, default_values
+from mpr_tvb_vbjax_test_parameters import coupling_, default_values
 from tvb_broken_mpr_model import MontbrioPazoRoxin_broken
 
 
