@@ -59,9 +59,6 @@ def run_tvb_implementation(
     test_data: List[npt.NDArray] | None = None,
 ):
 
-    if not test_data:
-        test_data = create_meshgrid_linspace(test_case)
-
     parameters_only = test_case[["tau", "I", "Delta", "J", "eta", "cr", "cv"]]
 
     param_dict = {k: np.array([v]) for k, v in parameters_only.items()}
@@ -76,8 +73,6 @@ def run_vbjax_implementation(
     test_case=default_values.iloc[0],
     test_data: List[npt.NDArray] | None = None,
 ):
-    if not test_data:
-        test_data = create_meshgrid_linspace(test_case)
     parameters_only = test_case[["tau", "I", "Delta", "J", "eta", "cr", "cv"]]
     params_as_mprtheta = MPRTheta(**parameters_only.to_dict())
     return mpr_dfun(

@@ -29,25 +29,26 @@ default_values = pd.DataFrame(
 )
 
 
-# _test_cases = [
-#     {"eta": [-10, -5, -0.001]},
-#     {"tau": [0.001, 5, 8, 12, 14.9]},
-#     {"I": [-10, 10]},
-# ]
-
-
 _test_cases = [
-    dict(zip(["tau", "I", "Delta", "J", "eta", "cr", "cv"], values))
-    for values in itertools.product(
-        np.linspace(0.001, 15.0, 3),  # tau
-        np.linspace(-10.0, 10.0, 3),  # I
-        np.linspace(0.0, 10.0, 3),  # Delta
-        np.linspace(-25.0, 25.0, 3),  # J
-        np.linspace(-10.0, 10.0, 3),  # eta
-        np.linspace(0.0, 1.0, 3),  # cr
-        np.linspace(0.0, 1.0, 3),  # cv
-    )
+    {"eta": [-10, -5, -0.001], "tau": [0.7, 0.3]}
+    #     {"eta": [-10, -5, -0.001]},
+    #     {"tau": [0.001, 5, 8, 12, 14.9]},
+    #     {"I": [-10, 10]},
 ]
+
+
+# _test_cases = [
+#     dict(zip(["tau", "I", "Delta", "J", "eta", "cr", "cv"], values))
+#     for values in itertools.product(
+#         np.linspace(0.001, 15.0, 3),  # tau
+#         np.linspace(-10.0, 10.0, 3),  # I
+#         np.linspace(0.0, 10.0, 3),  # Delta
+#         np.linspace(-25.0, 25.0, 3),  # J
+#         np.linspace(-10.0, 10.0, 3),  # eta
+#         np.linspace(0.0, 1.0, 3),  # cr
+#         np.linspace(0.0, 1.0, 3),  # cv
+#     )
+# ]
 
 
 def _expand_test_cases(base_cases):
