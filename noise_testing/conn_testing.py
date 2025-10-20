@@ -17,10 +17,8 @@ class ModelWrapper:
         self.noise = 0.0
         self.size = 5
         self.conn = np.zeros((self.size, self.size))
-        interim_conn = connectivity.Connectivity.from_file()
-        np.fill_diagonal(interim_conn.weights, 0)
-        self.conn = interim_conn.weights
-        self.size = self.conn.shape[0]
+        self.conn = connectivity.Connectivity.from_file()
+        self.size = self.conn.weights.shape[0]
         self.tract_len = np.zeros((self.size, self.size))
         self.a = 0.35
         self.w = 0.2
@@ -42,8 +40,6 @@ class TvbModel(ModelWrapper):
 
         conn.centres_spherical(number_of_regions=self.size)
         conn.create_region_labels()
-
-        hiss = tvbl.noise.Additive(nsig=np.r_[self.noise])
 
         self.sim = simulator.Simulator(
             connectivity=conn,
@@ -102,12 +98,11 @@ def run_multi_tvb():
     return arr
 
 
-tvbModel = TvbModel()
+if __name__ == "__main__":
 
-tvb_result = np.array(
-    [np.reshape(tvbModel.run()[0][1].T, neurolib_result[0].shape) for _ in range(10)]
-)
+    tvbModel = TvbModel()
 
+    tvb_result = np.array([np.reshape(tvbModel.run()[0][1].T, neurolib_result[0].shape) for _ in range(10)])
 
-print(f"nlb shape: {neurolib_result.shape}\ntvb shape: {tvb_result.shape}")
-np.testing.assert_allclose(tvb_result, neurolib_result)
+    print(f"nlb shape: {neurolib_result.shape}\ntvb shape: {tvb_result.shape}")
+    np.testing.assert_allclose(tvb_result, neurolib_result)
