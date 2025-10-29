@@ -18,8 +18,8 @@ if __name__ == "__main__":
     run_test(config)
     print("############### Neurolib and TVB results are close enough! ###############")
 
-    # config_delay = Config(random_seed=46)
-    # config_delay.init_config_for_delays()
-    # print("############### Delay test ###############")
-    # run_test(config_delay)
-    # print("############### Neurolib and TVB results are close enough! ###############")
+    config_delay = Config(random_seed=46)
+    config_delay.init_config_for_delays()
+    print("############### Delay test ###############")
+    run_test(config_delay)
+    print("############### Neurolib and TVB results are close enough! ###############")

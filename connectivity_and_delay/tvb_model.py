@@ -1,4 +1,3 @@
-from jax import config
 import numpy as np
 from tvb.simulator import simulator, coupling
 from tvb.simulator.integrators import EulerDeterministic
@@ -18,9 +17,10 @@ class TvbModel:
             model=SupHopf(a=np.r_[self.config.a], omega=np.r_[self.config.w]),
             integrator=EulerDeterministic(dt=self.config.dt),
             initial_conditions=self.config.init_cond,
+            conduction_speed=self.config.speed,
             monitors=[Raw()],
             simulation_length=self.config.dt * self.config.sim_steps,
-            coupling=coupling.Scaling(a=np.r_[1.0]),
+            coupling=coupling.Scaling(a=np.r_[self.config.coupling_strength]),
         )
         self.sim.configure()
 

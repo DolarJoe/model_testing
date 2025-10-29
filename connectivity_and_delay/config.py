@@ -1,4 +1,3 @@
-from jax import config
 import numpy as np
 from tvb.simulator.lab import connectivity
 
@@ -12,6 +11,7 @@ class Config:
         self.w = 0.2
         self.np_rng = np.random.default_rng(seed=random_seed)
         self.history_length = 10
+        self.coupling_strength = 1.0
 
     def __config_connectivity(self):
         self.conn = connectivity.Connectivity.from_file()
@@ -26,12 +26,12 @@ class Config:
             [[self.np_rng.random((self.size, 1)), self.np_rng.random((self.size, 1))]]
         ]
 
-    # def init_config_for_delays(self):
-    #     self.__config_connectivity()
-    #     init_hist_shape = (
-    #         np.rint((self.conn.tract_lengths / self.speed) / self.dt).astype(np.int32).max() + 1
-    #     )
-    #     self.init_cond = self.np_rng.random((init_hist_shape, 2, self.size, 1))
-    #     max_len = np.max(self.conn.tract_lengths)
-    #     self.conn.tract_lengths /= max_len
-    #     self.conn.tract_lengths *= self.history_length - 1
+    def init_config_for_delays(self):
+        self.__config_connectivity()
+        max_len = np.max(self.conn.tract_lengths)
+        self.conn.tract_lengths /= max_len
+        self.conn.tract_lengths *= self.history_length - 1
+        init_hist_shape = int((np.max(self.conn.tract_lengths) / self.dt) + 1)
+        print("init_hist_shape", init_hist_shape)
+        self.init_cond = self.np_rng.random((init_hist_shape, 2, self.size, 1))
+        self.conn.configure()
