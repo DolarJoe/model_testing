@@ -1,12 +1,14 @@
 import numpy as np
 from tvb.simulator.lab import connectivity
+import tvb.simulator.lab as tvbl
+from tvb.simulator.models.oscillator import SupHopf
 
 
 class Config:
     def __init__(self, random_seed):
         self.dt = 0.1
         self.sim_steps = 1
-        self.speed = 1.0
+        self.speed = 2.0
         self.a = 0.35
         self.w = 0.2
         self.np_rng = np.random.default_rng(seed=random_seed)
@@ -26,12 +28,29 @@ class Config:
             [[self.np_rng.random((self.size, 1)), self.np_rng.random((self.size, 1))]]
         ]
 
+    # TODO state variable count is hardcoded here, fix
     def init_config_for_delays(self):
         self.__config_connectivity()
         max_len = np.max(self.conn.tract_lengths)
         self.conn.tract_lengths /= max_len
         self.conn.tract_lengths *= self.history_length - 1
-        init_hist_shape = int((np.max(self.conn.tract_lengths) / self.dt) + 1)
-        print("init_hist_shape", init_hist_shape)
-        self.init_cond = self.np_rng.random((init_hist_shape, 2, self.size, 1))
+        # Maybe this is the right way to do it, I don't know
+        # init_hist_shape = int((np.max(self.conn.tract_lengths) / self.dt) / self.dt + 1)
+        # self.init_cond = self.np_rng.random((init_hist_shape, 2, self.size, 1))
+        self.init_cond = self.np_rng.random(self.get_good_history_shape())
+        print("init_hist_shape", self.get_good_history_shape())
         self.conn.configure()
+
+    # TODO model is hardcoded here, fix
+    def get_good_history_shape(self):
+        # There is most assuredly a way to calculate this directly from the
+        # connectivity and dt, but I have made a mistake here so many times already
+        # that I will simply use TVB to do it for me.
+        temp_sim = tvbl.simulator.Simulator(
+            connectivity=self.conn,
+            model=SupHopf(),
+            integrator=tvbl.integrators.EulerDeterministic(dt=self.dt),
+            conduction_speed=self.speed,
+            simulation_length=self.dt * self.sim_steps,
+        ).configure()
+        return temp_sim.good_history_shape
