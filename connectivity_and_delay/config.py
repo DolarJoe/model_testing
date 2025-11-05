@@ -14,6 +14,7 @@ class Config:
         self.np_rng = np.random.default_rng(seed=random_seed)
         self.history_length = 10
         self.coupling_strength = 1.0
+        self.noise = 0.0
 
     def __config_connectivity(self):
         self.conn = connectivity.Connectivity.from_file()

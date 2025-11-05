@@ -1,9 +1,10 @@
 import numpy as np
 from tvb.simulator import simulator, coupling
-from tvb.simulator.integrators import EulerDeterministic
+from tvb.simulator.integrators import EulerDeterministic, EulerStochastic
 from tvb.simulator.monitors import Raw
 from tvb.simulator.models.oscillator import SupHopf
 from config import Config
+import tvb.simulator.lab as tvbl
 
 
 class TvbModel:
@@ -15,7 +16,12 @@ class TvbModel:
         self.sim = simulator.Simulator(
             connectivity=self.config.conn,
             model=SupHopf(a=np.r_[self.config.a], omega=np.r_[self.config.w]),
-            integrator=EulerDeterministic(dt=self.config.dt),
+            integrator=EulerStochastic(
+                dt=self.config.dt,
+                noise=tvbl.noise.Additive(
+                    nsig=np.r_[self.config.noise],
+                ),
+            ),
             initial_conditions=self.config.init_cond,
             conduction_speed=self.config.speed,
             monitors=[Raw()],
@@ -25,4 +31,4 @@ class TvbModel:
         self.sim.configure()
 
     def run(self):
-        return self.sim.run()
+        return self.sim.run()[0][1].T

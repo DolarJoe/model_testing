@@ -6,7 +6,7 @@ import numpy as np
 
 def run_test(config):
     neurolib_result = NeurolibModel(config).run()
-    tvb_result = np.reshape(TvbModel(config).run()[0][1].T, neurolib_result.shape)
+    tvb_result = np.reshape(TvbModel(config).run(), neurolib_result.shape)
     np.testing.assert_allclose(neurolib_result, tvb_result)
 
 
