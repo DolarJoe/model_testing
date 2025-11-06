@@ -2,6 +2,7 @@ import numpy as np
 from tvb.simulator.lab import connectivity
 import tvb.simulator.lab as tvbl
 from tvb.simulator.models.oscillator import SupHopf
+from connectivity_and_delay.conn_no_warning import ConnNoWarnings
 
 
 class Config:
@@ -17,7 +18,7 @@ class Config:
         self.noise = 0.0
 
     def __config_connectivity(self):
-        self.conn = connectivity.Connectivity.from_file()
+        self.conn = ConnNoWarnings().from_file()
         np.fill_diagonal(self.conn.weights, 0)  # remove self-connections
         self.conn.speed = np.r_[self.speed]
         self.size = self.conn.weights.shape[0]
