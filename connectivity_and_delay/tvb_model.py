@@ -20,6 +20,7 @@ class TvbModel:
                 dt=self.config.dt,
                 noise=tvbl.noise.Additive(
                     nsig=np.r_[self.config.noise],
+                    noise_seed=self.config.noise_seed,
                 ),
             ),
             initial_conditions=self.config.init_cond,

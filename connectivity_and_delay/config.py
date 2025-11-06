@@ -15,6 +15,7 @@ class Config:
         self.history_length = 10
         self.coupling_strength = 1.0
         self.noise = 0.0
+        self.noise_seed = noise_seed
 
     def __config_connectivity(self):
         self.conn = ConnNoWarnings().from_file()
