@@ -44,6 +44,7 @@ class Config:
 
     # TODO model is hardcoded here, fix
     def get_good_history_shape(self):
+        self.__config_connectivity()
         # There is most assuredly a way to calculate this directly from the
         # connectivity and dt, but I have made a mistake here so many times already
         # that I will simply use TVB to do it for me.
