@@ -1,7 +1,7 @@
 import numpy as np
 import tvb.simulator.lab as tvbl
 from tvb.simulator.models.oscillator import SupHopf
-from connectivity_and_delay.conn_no_warning import ConnNoWarnings
+from conn_no_warning import ConnNoWarnings
 
 
 class Config:
