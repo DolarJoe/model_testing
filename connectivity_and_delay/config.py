@@ -1,18 +1,17 @@
 import numpy as np
-from tvb.simulator.lab import connectivity
 import tvb.simulator.lab as tvbl
 from tvb.simulator.models.oscillator import SupHopf
 from connectivity_and_delay.conn_no_warning import ConnNoWarnings
 
 
 class Config:
-    def __init__(self, random_seed):
+    def __init__(self, initial_conditions_seed, noise_seed=42):
         self.dt = 0.1
         self.sim_steps = 1
         self.speed = 2.0
         self.a = 0.35
         self.w = 0.2
-        self.np_rng = np.random.default_rng(seed=random_seed)
+        self.init_cond_rng = np.random.default_rng(seed=initial_conditions_seed)
         self.history_length = 10
         self.coupling_strength = 1.0
         self.noise = 0.0
@@ -27,7 +26,7 @@ class Config:
         self.__config_connectivity()
         self.conn.tract_lengths = np.zeros_like(self.conn.weights)  # because of neurolib
         self.init_cond = np.r_[
-            [[self.np_rng.random((self.size, 1)), self.np_rng.random((self.size, 1))]]
+            [[self.init_cond_rng.random((self.size, 1)), self.init_cond_rng.random((self.size, 1))]]
         ]
 
     # TODO state variable count is hardcoded here, fix
@@ -39,8 +38,7 @@ class Config:
         # Maybe this is the right way to do it, I don't know
         # init_hist_shape = int((np.max(self.conn.tract_lengths) / self.dt) / self.dt + 1)
         # self.init_cond = self.np_rng.random((init_hist_shape, 2, self.size, 1))
-        self.init_cond = self.np_rng.random(self.get_good_history_shape())
-        print("init_hist_shape", self.get_good_history_shape())
+        self.init_cond = self.init_cond_rng.random(self.get_good_history_shape())
         self.conn.configure()
 
     # TODO model is hardcoded here, fix

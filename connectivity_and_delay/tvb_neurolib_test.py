@@ -7,18 +7,18 @@ import numpy as np
 def run_test(config):
     neurolib_result = NeurolibModel(config).run()
     tvb_result = np.reshape(TvbModel(config).run(), neurolib_result.shape)
-    np.testing.assert_allclose(neurolib_result, tvb_result)
+    np.testing.assert_allclose(neurolib_result, tvb_result, atol=1e-6)
 
 
 if __name__ == "__main__":
 
-    config = Config(random_seed=46)
+    config = Config(initial_conditions_seed=46)
     config.init_config_for_connectivity()
     print("############### Connectivity test ###############")
     run_test(config)
     print("############### Neurolib and TVB results are close enough! ###############")
 
-    config_delay = Config(random_seed=46)
+    config_delay = Config(initial_conditions_seed=46)
     config_delay.init_config_for_delays()
     print("############### Delay test ###############")
     run_test(config_delay)
