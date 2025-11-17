@@ -1,9 +1,10 @@
 from matplotlib import pyplot as plt
-import scipy
+import scipy.stats
 from config import Config
 from neurolib_model import NeurolibModel
 from tvb_model import TvbModel
 import numpy as np
+import seaborn as sns
 
 
 def run_test(config):
@@ -13,25 +14,28 @@ def run_test(config):
 
 
 def run_noise_comparison(initial_conditons_seed, number_of_tests):
-    seeds_for_noise = list(range(number_of_tests))
+
     results_no_noise = []
     results_with_noise = []
-    for i in seeds_for_noise:
-        config = Config(initial_conditions_seed=initial_conditons_seed)
-        config.init_config_for_connectivity()
 
-        config.noise_seed = i
-        config.noise = 0.8999
-        results_no_noise.append(TvbModel(config).run()[0, 0, 0, 0])
+    config = Config(initial_conditions_seed=initial_conditons_seed)
+    config.init_cond_for_noise()
 
-        config.noise_seed = i + number_of_tests
-        config.noise = 9.0
-        results_with_noise.append(TvbModel(config).run()[0, 0, 0, 0])
+    # Run model with noise
+    config.noise_seed = 0
+    config.noise = 10.0
+    results_with_noise = TvbModel(config).run().flatten()
 
-    print(scipy.stats.ks_2samp(results_no_noise, results_with_noise))
-    plt.hist(results_no_noise, bins=50, density=True, alpha=0.5, color="green")
-    plt.hist(results_with_noise, bins=50, density=True, alpha=0.5, color="red")
-    plt.show()
+    # Run model without noise
+    config.noise_seed = 0 + number_of_tests
+    config.noise = 0.1
+
+    config.noise = 0
+    results_no_noise = TvbModel(config).run().flatten()
+
+    # Statistical test
+    ks_stat, ks_p = scipy.stats.ks_2samp(results_no_noise, results_with_noise)
+    print(f"KS Test → Statistic: {ks_stat:.4f}, p-value: {ks_p:.4e}")
 
 
 if __name__ == "__main__":

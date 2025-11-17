@@ -1,3 +1,4 @@
+import numpy as np
 from config import Config
 from neurolib.models.hopf import HopfModel
 
@@ -21,6 +22,16 @@ class NeurolibModel:
         self.model.params["coupling"] = "additive"
         self.model.params["K_gl"] = self.config.coupling_strength
         self.model.params["signalV"] = self.config.speed
+        if self.config.noise != 0:
+            self.model.params["sigma_ou"] = self.config.noise
+            self.model.params["x_ou_mean"] = self.config.noise
+            self.model.params["y_ou_mean"] = self.config.noise
+            self.model.params["x_ou"] = np.random.uniform(
+                -self.config.noise, self.config.noise, (self.config.size,)
+            )
+            self.model.params["y_ou"] = np.random.uniform(
+                -self.config.noise, self.config.noise, (self.config.size,)
+            )
 
     def run(self):
         self.model.run()

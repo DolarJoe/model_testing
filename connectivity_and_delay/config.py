@@ -16,9 +16,11 @@ class Config:
         self.coupling_strength = 1.0
         self.noise = 0.0
         self.noise_seed = noise_seed
+        self.conn = None
 
     def __config_connectivity(self):
-        self.conn = ConnNoWarnings().from_file()
+        if self.conn is None:
+            self.conn = ConnNoWarnings().from_file()
         np.fill_diagonal(self.conn.weights, 0)  # remove self-connections
         self.conn.speed = np.r_[self.speed]
         self.size = self.conn.weights.shape[0]
@@ -41,6 +43,17 @@ class Config:
         # self.init_cond = self.np_rng.random((init_hist_shape, 2, self.size, 1))
         self.init_cond = self.init_cond_rng.random(self.get_good_history_shape())
         self.conn.configure()
+
+    def init_cond_for_noise(self):
+        self.conn = ConnNoWarnings()
+        self.conn.weights = np.zeros((1000, 1000))
+        self.conn.centres_spherical(number_of_regions=1000)
+        self.conn.compute_tract_lengths()
+        self.conn.compute_region_labels()
+        self.conn.try_compute_hemispheres()
+        self.conn.configure()
+        self.__config_connectivity()
+        self.init_cond = np.r_[[[np.zeros((self.size, 1)), np.zeros((self.size, 1))]]]
 
     # TODO model is hardcoded here, fix
     def get_good_history_shape(self):
