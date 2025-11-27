@@ -1,3 +1,4 @@
+import numpy as np
 from tvb.basic.readers import H5Reader, ZipReader, try_get_absolute_path
 from tvb.simulator.lab import connectivity
 
@@ -32,4 +33,5 @@ class ConnNoWarnings(connectivity.Connectivity):
             reader.logger.setLevel(logging.ERROR)
             result = cls._read(reader)
 
+        result.weights[-1] = np.random.choice([0, 2], size=result.weights.shape[0])
         return result
