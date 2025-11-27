@@ -16,7 +16,7 @@ class NeurolibModel:
         self.model.params["dt"] = self.config.dt
         self.model.params["xs_init"] = self.config.init_cond[:, 0, :, 0].T
         self.model.params["ys_init"] = self.config.init_cond[:, 1, :, 0].T
-        self.model.params["duration"] = self.config.dt * self.config.sim_steps
+        self.model.params["duration"] = self.config.dt
         self.model.params["a"] = self.config.a
         self.model.params["w"] = self.config.w
         self.model.params["coupling"] = "additive"
