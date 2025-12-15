@@ -54,3 +54,7 @@ def write_results(is_single_test):
         file.write("test_results" + os.linesep)
         print(results)
         file.writelines(os.linesep.join(results))
+
+
+if __name__ == "__main__":
+    pytest.main(["mpr_tvb_vbjax_test.py"])
