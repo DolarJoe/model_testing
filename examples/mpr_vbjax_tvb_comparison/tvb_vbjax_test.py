@@ -1,9 +1,8 @@
-from matplotlib import pyplot as plt
+import numpy as np
 import scipy.stats
 from mpr_config import MPRConfig
-from vbjax_model import VBJaxModel
 from tvb_mpr_model import TvbMPRModel
-import numpy as np
+from vbjax_model import VBJaxModel
 
 
 def run_test(config: MPRConfig):
@@ -11,38 +10,48 @@ def run_test(config: MPRConfig):
 
     vbjax_result = VBJaxModel(config).run()
     tvb_result = np.reshape(TvbMPRModel(config).run(), vbjax_result.shape)
-    np.testing.assert_allclose(vbjax_result, tvb_result, atol=1e-6)
+    np.testing.assert_allclose(vbjax_result, tvb_result, rtol=5e-6)
 
 
-def run_noise_comparison(initial_conditons_seed, number_of_tests):
+def noise_test(number_of_tests):
 
     for state_var in [0, 1]:
-        for dt in [0.001, 0.01, 0.1]:
-            results_no_noise = []
-            results_with_noise = []
+        for noise_strength in [1, 10]:
+            for dt in [0.001, 0.01, 0.05]:
+                vbjax_result = []
+                tvb_result = []
 
-            config = MPRConfig()
-            config.dt = dt
-            config.init_cond_for_noise()
+                config = MPRConfig()
+                config.dt = dt
+                config.init_cond_for_noise()
 
-            # Run model with noise
-            config.noise_seed = 0
-            config.noise = 10.0
-            results_with_noise = TvbMPRModel(config).run()[0][state_var].flatten()
+                # Run model with noise
+                config.noise_seed = 13
+                config.noise = noise_strength
+                tvb_result = TvbMPRModel(config).run()[0][state_var].flatten()
 
-            # Run model without noise
-            config.noise_seed = 0 + number_of_tests
-            results_no_noise = VBJaxModel(config).run()[state_var].flatten()
+                # Run model without noise
+                config.noise_seed = 0 + number_of_tests
 
-            # Statistical test
-            ks_stat, ks_p = scipy.stats.ks_2samp(results_no_noise, results_with_noise)
-            print(f"KS Test dt={dt} → Statistic: {ks_stat:.4f}, p-value: {ks_p:.4e}")
+                # SCALE THE NOISE TO MATCH TVB
+                # @patrik ked si spustis test tak uvidis ze failuje na niektorych dt hodnotach,
+                # konkretne MPR je velmi citlive na dt
+                # Ale ak by si odstranil tento scaling (je vytiahnuty z TVB kodu, VBJax nic take nerobi)
+                # tak to bude failovat uplne
+                config.noise = np.sqrt(2.0 * config.noise)
+
+                vbjax_result = VBJaxModel(config).run()[state_var].flatten()
+
+                # Statistical test
+                ks_stat, ks_p = scipy.stats.ks_2samp(vbjax_result, tvb_result)
+                print(f"KS Test dt={dt:.3f}, state_var={state_var}, noise_strength={noise_strength} → Statistic: {ks_stat:.4f}, p-value: {ks_p:.4f}")
 
 
 def connectivity_test(number_of_tests):
+    print("running connectivity testing")
     for i in range(number_of_tests):
         config = MPRConfig(initial_conditions_seed=i)
-        print(f"Test {i+1}")
+        # print(f"Test {i+1}")
         config.init_config_for_connectivity()
         run_test(config)
 
@@ -61,5 +70,5 @@ if __name__ == "__main__":
     # No delay testing
 
     print("############### Noise test ###############")
-    run_noise_comparison(initial_conditons_seed=26, number_of_tests=1000)
-    print("############### Low pvalue means the distributions don't match ###############")
+    noise_test(initial_conditons_seed=26, number_of_tests=1000)
+    print("############### Low pvalue (>0.05) means the distributions don't match ###############")

@@ -6,6 +6,10 @@ import logging
 
 
 class ConnNoWarnings(connectivity.Connectivity):
+    """
+    An alteration of the connectivity from TVB which produces less errors
+    """
+
     def __init__(self):
         super().__init__()
 

@@ -1,23 +1,20 @@
 import numpy as np
-from tvb.simulator.lab import connectivity
-
 from conn_no_warning import ConnNoWarnings
 
 
-class MPRConfig:
-    def __init__(self, initial_conditions_seed=42, noise_seed=42):
+class Config:
+    """
+    A configuration class aimed at unifying the parameters with which different simulators are initialized
+    """
+
+    def __init__(self, initial_conditions_seed, noise_seed=42):
         self.dt = 0.1
         self.speed = 2.0
+        # Here implement neural mass model specific parameters
 
-        # model params
-        self.tau = 1.0
-        self.I = 0.0
-        self.Delta = 1.0
-        self.J = 15.0
-        self.eta = -5.0
-        self.cr = 1.0
-        self.cv = 0.0
-
+        # @patrik tu si bud prepis svoje parametre z toho vlastneho configu,
+        # alebo ak budes copy pastovat tento scaffold (to je indended use case)
+        # tak mozes pouzit dict tak ako mas u seba a zjedondusit si pisanie wrapperov okolo driverov
         self.init_cond_rng = np.random.default_rng(seed=initial_conditions_seed)
         self.history_length = 10
         self.coupling_strength = 1.0
@@ -42,14 +39,8 @@ class MPRConfig:
         self.conn.compute_region_labels()
         self.conn.try_compute_hemispheres()
         self.conn.configure()
-        self.init_cond = np.r_[
-            [
-                [
-                    self.init_cond_rng.uniform(0.0, 2.0, (self.size, 1)),
-                    self.init_cond_rng.uniform(-2.0, 1.5, (self.size, 1)),
-                ]
-            ]
-        ]
+        # Replace init conditions for a sampling reflecting your model state variable range
+        self.init_cond = np.r_[[[np.ones((self.size, 1)), np.ones((self.size, 1))]]]
 
     def init_config_for_connectivity(self):
         self._config_connectivity()

@@ -1,16 +1,20 @@
 import numpy as np
-from tvb.simulator import simulator, coupling
-from tvb.simulator.integrators import EulerDeterministic, EulerStochastic
-from tvb.simulator.monitors import Raw
-from tvb.simulator.models.infinite_theta import MontbrioPazoRoxin
-from mpr_config import MPRConfig
 import tvb.simulator.lab as tvbl
+from mpr_config import MPRConfig
+from tvb.simulator import coupling, simulator
+from tvb.simulator.integrators import EulerStochastic
+from tvb.simulator.models.infinite_theta import MontbrioPazoRoxin
+from tvb.simulator.monitors import Raw
 
 
 class TvbMPRModel:
     def __init__(self, config: MPRConfig):
         self.config = config
         self._configure_sim()
+
+    # @patrik takto sa scaluje noise strength v TVB, napr. VBJax nic take nerobi
+    # Najdes to v tvbl.noise.Additive
+    # g_x = numpy.sqrt(2.0 * self.nsig)
 
     def _configure_sim(self):
         self.sim = simulator.Simulator(

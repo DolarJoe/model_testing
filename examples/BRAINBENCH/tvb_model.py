@@ -1,10 +1,10 @@
 import numpy as np
-from tvb.simulator import simulator, coupling
-from tvb.simulator.integrators import EulerStochastic
-from tvb.simulator.monitors import Raw
-from tvb.simulator.models.oscillator import SupHopf
-from suphopf_config import SupHopfConfig
 import tvb.simulator.lab as tvbl
+from suphopf_config import SupHopfConfig
+from tvb.simulator import coupling, simulator
+from tvb.simulator.integrators import EulerStochastic
+from tvb.simulator.models.oscillator import SupHopf
+from tvb.simulator.monitors import Raw
 
 
 class TvbModel:

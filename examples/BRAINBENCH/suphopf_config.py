@@ -1,15 +1,18 @@
 import numpy as np
-import tvb.simulator.lab as tvbl
-from tvb.simulator.models.oscillator import SupHopf
 from conn_no_warning import ConnNoWarnings
 
 
-class Config:
+class SupHopfConfig:
     def __init__(self, initial_conditions_seed, noise_seed=42):
         self.dt = 0.1
         self.speed = 2.0
+
+        # @patrik tu to bud nechaj takto, alebo prepis svoje parametre z toho vlastneho configu,
+        # alebo mozes pouzit dict tak ako mas u seba a zjedondusit si pisanie wrapperov okolo driverov
+        # ak budes testovat driver proti driveru
         self.a = 0.35
         self.w = 0.2
+        ### koniec modelovych parametrov ###
         self.init_cond_rng = np.random.default_rng(seed=initial_conditions_seed)
         self.history_length = 10
         self.coupling_strength = 1.0
@@ -26,7 +29,16 @@ class Config:
         self.size = self.conn.weights.shape[0]
 
     def init_config_for_dfun(self):
-        raise NotImplementedError("Dfun init not yet implemented")
+        self.conn = ConnNoWarnings()
+        self.size = 1000
+        self.conn.weights = np.zeros((self.size, self.size))
+        self.conn.tract_lengths = np.zeros((self.size, self.size))
+        self.conn.centres_spherical(number_of_regions=self.size)
+        self.conn.compute_region_labels()
+        self.conn.try_compute_hemispheres()
+        self.conn.configure()
+        # Replace init conditions for a sampling reflecting your model state variable range
+        self.init_cond = np.r_[[[np.ones((self.size, 1)), np.ones((self.size, 1))]]]
 
     def init_config_for_connectivity(self):
         self._config_connectivity()

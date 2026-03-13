@@ -1,9 +1,8 @@
-from matplotlib import pyplot as plt
-import scipy.stats
-from config import Config
-from neurolib_model import NeurolibModel
-from tvb_model import TvbModel
 import numpy as np
+import scipy.stats
+from neurolib_model import NeurolibModel
+from suphopf_config import SupHopfConfig
+from tvb_model import TvbModel
 
 
 def run_test(config):
@@ -13,33 +12,14 @@ def run_test(config):
 
 
 def run_noise_comparison(initial_conditons_seed, number_of_tests):
-
-    for dt in [0.001, 0.01, 0.1]:
-        results_no_noise = []
-        results_with_noise = []
-
-        config = Config(initial_conditions_seed=initial_conditons_seed)
-        config.dt = dt
-        config.init_cond_for_noise()
-
-        # Run model with noise
-        config.noise_seed = 0
-        config.noise = 10.0
-        results_with_noise = TvbModel(config).run().flatten()
-
-        # Run model without noise
-        config.noise_seed = 0 + number_of_tests
-        config.noise = 9.8
-        results_no_noise = TvbModel(config).run().flatten()
-
-        # Statistical test
-        ks_stat, ks_p = scipy.stats.ks_2samp(results_no_noise, results_with_noise)
-        print(f"KS Test dt={dt} → Statistic: {ks_stat:.4f}, p-value: {ks_p:.4e}")
+    # @patrik toto nas v podstate nezaujima pre tvoj use case,
+    # beztak sa neda rozumne porovnavat noise v TVB a Neurolibe
+    pass
 
 
 def connectivity_test(number_of_tests):
     for i in range(number_of_tests):
-        config = Config(initial_conditions_seed=i)
+        config = SupHopfConfig(initial_conditions_seed=i)
         print(f"\rTest {i+1:04d}", end="\r")
         config.init_config_for_connectivity()
         run_test(config)
@@ -51,7 +31,7 @@ def delay_test():
         for speed in (round(x) for x in range(1, 25, 3)):
             for c_s in [0.01, 0.5, 1.0]:
                 for i in range(10):
-                    config_delay = Config(initial_conditions_seed=i)
+                    config_delay = SupHopfConfig(initial_conditions_seed=i)
                     config_delay.dt = dt
                     config_delay.speed = speed
                     config_delay.coupling_strength = c_s
@@ -71,6 +51,6 @@ if __name__ == "__main__":
     delay_test()
     print("############### Neurolib and TVB results are close enough! ###############")
 
-    print("############### Noise test ###############")
-    run_noise_comparison(initial_conditons_seed=26, number_of_tests=1000)
-    print("############### Low pvalue means the distributions don't match ###############")
+    # print("############### Noise test (artificial, TVB compared to TVB) ###############")
+    # run_noise_comparison(initial_conditons_seed=26, number_of_tests=1000)
+    # print("############### Low pvalue means the distributions don't match ###############")

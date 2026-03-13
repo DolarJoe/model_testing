@@ -1,10 +1,10 @@
 import numpy as np
-from config import Config
+from suphopf_config import SupHopfConfig
 from neurolib.models.hopf import HopfModel
 
 
 class NeurolibModel:
-    def __init__(self, config: Config):
+    def __init__(self, config: SupHopfConfig):
         self.config = config
         self._configure_sim()
 
@@ -26,12 +26,8 @@ class NeurolibModel:
             self.model.params["sigma_ou"] = self.config.noise
             self.model.params["x_ou_mean"] = self.config.noise
             self.model.params["y_ou_mean"] = self.config.noise
-            self.model.params["x_ou"] = np.random.uniform(
-                -self.config.noise, self.config.noise, (self.config.size,)
-            )
-            self.model.params["y_ou"] = np.random.uniform(
-                -self.config.noise, self.config.noise, (self.config.size,)
-            )
+            self.model.params["x_ou"] = np.random.uniform(-self.config.noise, self.config.noise, (self.config.size,))
+            self.model.params["y_ou"] = np.random.uniform(-self.config.noise, self.config.noise, (self.config.size,))
 
     def run(self):
         self.model.run()

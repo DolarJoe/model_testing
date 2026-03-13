@@ -4,7 +4,6 @@ import seaborn as sns
 from mpr_config import MPRConfig
 from tvb_mpr_model import TvbMPRModel
 from vbjax_model import VBJaxModel
-import random
 
 
 def graph_noise_comparison(initial_conditons_seed, number_of_tests):

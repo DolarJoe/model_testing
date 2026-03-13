@@ -1,8 +1,6 @@
-import numpy
 import jax.numpy as np
-from mpr_config import MPRConfig
 import vbjax as vb
-import tvb.simulator.lab as tvbl
+from mpr_config import MPRConfig
 
 
 class VBJaxModel:

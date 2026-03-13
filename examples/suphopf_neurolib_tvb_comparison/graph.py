@@ -1,7 +1,7 @@
 from matplotlib import pyplot as plt
 import seaborn as sns
 
-from config import Config
+from suphopf_config import SupHopfConfig
 from tvb_model import TvbModel
 
 
@@ -11,7 +11,7 @@ def graph_noise_comparison(initial_conditons_seed, number_of_tests):
 
     results_low_noise = []
     results_with_noise = []
-    config = Config(initial_conditions_seed=initial_conditons_seed)
+    config = SupHopfConfig(initial_conditions_seed=initial_conditons_seed)
     config.init_cond_for_noise()
 
     # Run model without noise
@@ -48,9 +48,7 @@ def graph_noise_comparison(initial_conditons_seed, number_of_tests):
     )
 
     # Add nice labels and legend
-    plt.title(
-        "Comparison of Model Output Distributions\nWith vs. Without Noise", fontsize=18, pad=15
-    )
+    plt.title("Comparison of Model Output Distributions\nWith vs. Without Noise", fontsize=18, pad=15)
     plt.xlabel("Model Output", fontsize=14)
     plt.ylabel("Density", fontsize=14)
     plt.legend(title="Condition", fontsize=12)
